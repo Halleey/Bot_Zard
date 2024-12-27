@@ -42,15 +42,16 @@ export async function stickerController(sock, mensagem, options) {
         console.log('🟡 [DEBUG] Iniciando conversão com FFmpeg...');
         await new Promise((resolve, reject) => {
             ffmpeg(tempInputPath)
-                .outputOptions([
-                    '-vf', 'scale=512:512',
-                    '-c:v', 'libwebp',
-                    '-q:v', '50', // Ajuste da qualidade
-                    '-loop', '0',
-                    '-preset', 'default',
-                    '-an',
-                    '-vsync', '0',
-                ])
+            .outputOptions([
+                '-vf', 'scale=512:512',
+                '-t', '6', // Duração máxima
+                '-c:v', 'libwebp',
+                '-q:v', '50',
+                '-loop', '0',
+                '-preset', 'default',
+                '-an',
+                '-vsync', '0',
+            ])
                 .toFormat('webp')
                 .save(tempOutputPath)
                 .on('end', () => {
