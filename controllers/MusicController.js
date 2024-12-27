@@ -53,11 +53,17 @@ export const MusicController = async (sock, mensagemBaileys, options) => {
         // Enviar o áudio para o cliente
         console.log('🎵 Enviando áudio...');
         const audioBuffer = fs.readFileSync(mp3Path);
+        
         await sock.sendMessage(
             idChat,
-            { audio: audioBuffer, mimetype: 'audio/mpeg', ptt: true }, // ptt: true para mensagem de voz
+            { 
+                audio: { url: mp3Path }, // Enviar como arquivo de áudio
+                mimetype: 'audio/mpeg' 
+            },
             { quoted: mensagemBaileys.mensagemOriginal }
         );
+
+
         console.log('✅ Áudio enviado com sucesso!');
     } catch (error) {
         console.error('❌ Erro no MusicController:', error);
