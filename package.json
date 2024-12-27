@@ -17,6 +17,7 @@
     "sticker"
   ],
   "dependencies": {
+    "@adiwajshing/baileys": "^5.0.0",
     "@hapi/boom": "^10.0.1",
     "@seald-io/nedb": "^4.0.4",
     "@whiskeysockets/baileys": "^6.7.9",

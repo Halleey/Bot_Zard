@@ -4,7 +4,6 @@ import { stickerController } from '../controllers/StickerController.js';
 import { MusicController } from '../controllers/MusicController.js'; // Importa o controlador de músicas
 
 const PREFIX = '!';
-
 export const handleMessages = async (upsert, sock) => {
     try {
         const messages = upsert.messages;
@@ -28,6 +27,12 @@ export const handleMessages = async (upsert, sock) => {
             console.log('📩 Mensagem recebida:', mensagemBaileys);
 
             const comando = textoRecebido.trim().toLowerCase();
+
+            // Verifique se a mensagem é um comando
+            if (!comando.startsWith(PREFIX)) {
+                console.log('⚠️ [DEBUG] Mensagem ignorada (não é um comando):', comando);
+                continue;
+            }
 
             // Função para enviar respostas
             const responderTexto = async (idChat, texto, mensagemOriginal) => {
@@ -57,10 +62,11 @@ export const handleMessages = async (upsert, sock) => {
             else if (['imageMessage', 'videoMessage'].includes(tipoMensagem)) {
                 await handleMediaMessage(msg, sock, mensagemBaileys);
             } 
-            
+
+            // Ignorar comandos desconhecidos
             else {
-                console.log('⚠️ [DEBUG] Comando ou mensagem desconhecida:', comando);
-                await responderTexto(idChat, 'Comando não reconhecido. Tente !menu, !play ou envie uma mídia com !s.', msg);
+                console.log('⚠️ [DEBUG] Comando desconhecido:', comando);
+                // Não enviar nenhuma resposta ao usuário
             }
         }
     } catch (error) {

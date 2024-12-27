@@ -5,6 +5,7 @@ import path from 'path';
 
 /**
  * Controlador para criar figurinhas a partir de mídias enviadas usando FFmpeg.
+ * Suporta figurinhas animadas.
  * @param {Object} sock - Instância do WhatsApp.
  * @param {Object} mensagem - Dados da mensagem recebida.
  * @param {Object} options - Opções adicionais, como funções utilitárias.
@@ -42,16 +43,16 @@ export async function stickerController(sock, mensagem, options) {
         console.log('🟡 [DEBUG] Iniciando conversão com FFmpeg...');
         await new Promise((resolve, reject) => {
             ffmpeg(tempInputPath)
-            .outputOptions([
-                '-vf', 'scale=512:512',
-                '-t', '6', // Duração máxima
-                '-c:v', 'libwebp',
-                '-q:v', '50',
-                '-loop', '0',
-                '-preset', 'default',
-                '-an',
-                '-vsync', '0',
-            ])
+                .outputOptions([
+                    '-vf', 'scale=512:512:force_original_aspect_ratio=decrease,fps=15,pad=512:512:(ow-iw)/2:(oh-ih)/2',
+                    '-t', '10', // Duração máxima em segundos para animação
+                    '-c:v', 'libwebp',
+                    '-q:v', '50',
+                    '-loop', '0',
+                    '-preset', 'default',
+                    '-an',
+                    '-vsync', '0',
+                ])
                 .toFormat('webp')
                 .save(tempOutputPath)
                 .on('end', () => {
@@ -77,9 +78,7 @@ export async function stickerController(sock, mensagem, options) {
         await sock.sendMessage(
             idChat,
             {
-                sticker: {
-                    url: tempOutputPath,
-                },
+                sticker: stickerBuffer,
                 mimetype: 'image/webp',
                 ...stickerMetadata,
             },
