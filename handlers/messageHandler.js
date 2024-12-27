@@ -35,12 +35,18 @@ export const handleMessages = async (upsert, sock) => {
 
             const comando = textoRecebido.trim().toLowerCase();
 
-            // Verificar mensagens de usuários silenciados
             if (MutedUsersController.isMuted(idChat, senderId)) {
-                console.log(`🛑 Mensagem de usuário silenciado (${senderId}) excluída.`);
-                await sock.sendMessage(idChat, { delete: msg.key });
+                console.log(`🛑 Mensagem de usuário silenciado (${senderId}) será excluída após 2 segundos.`);
+                setTimeout(async () => {
+                    try {
+                        await sock.sendMessage(idChat, { delete: msg.key });
+                    } catch (error) {
+                        console.error('❌ Erro ao apagar mensagem:', error);
+                    }
+                }, 2000); // Atraso de 2 segundos
                 continue;
             }
+            
 
             // Verifique se a mensagem é um comando
             if (!comando.startsWith(PREFIX)) {

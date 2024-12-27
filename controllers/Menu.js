@@ -20,13 +20,14 @@ const saveInteraction = (id) => {
         fs.writeFileSync(interactionFilePath, JSON.stringify(interactions, null, 2));
     }
 };
-
-// Função para lidar com mensagens recebidas
 export const handleWelcomeMessage = async (client, msg) => {
     try {
         const interactions = getInteractions();
-        const senderId = msg.idChat; // ID do chat (grupo ou individual)
-        const isGroup = senderId.endsWith('@g.us'); // Verifica se é um grupo
+        const senderId = msg.idChat; 
+        const isGroup = senderId.endsWith('@g.us'); 
+        const botName = "Zard"; 
+        const adminName = "Hallyson";
+        const prefix = "!"; 
 
         if (!senderId) {
             console.error("❌ ID do remetente não encontrado!");
@@ -37,11 +38,14 @@ export const handleWelcomeMessage = async (client, msg) => {
 
         if (isFirstInteraction) {
             const welcomeMessage = `
-            👋 Olá! Seja bem-vindo(a)!
-
-            Eu sou o bot e estou aqui para te ajudar com várias funcionalidades. 😊
-
-            Envie *!menu* para ver a lista de comandos disponíveis.
+┌──〖 *🤖 ${botName.trim()}®* 〗
+│
+├──👋 *Seja bem-vindo(a)!*
+│
+├─ Eu sou o *${botName.trim()}* e estou aqui para te ajudar com várias funcionalidades. 😊
+├─ Digite *${prefix}menu* para acessar a lista de comandos disponíveis.
+│
+╰─❥ Desenvolvido por *${adminName.trim()}*
             `;
             await client.sendMessage(senderId, { text: welcomeMessage });
             saveInteraction(senderId); // Salva a interação no arquivo
@@ -50,34 +54,36 @@ export const handleWelcomeMessage = async (client, msg) => {
 
         // Responder ao comando !menu
         const comando = msg.texto.trim().toLowerCase();
-        if (comando === '!menu') {
+        if (comando === `${prefix}menu`) {
             const menuMessage = `
-            📜 *Menu Principal*:
-
-            1️⃣ *!menu geral*: Comandos disponíveis para todos os usuários.
-            2️⃣ *!menu grupos*: Comandos exclusivos para grupos.
-
-            📨 Digite um dos comandos acima para acessar o menu desejado.
+┌──〖 *🔎 MENU PRINCIPAL* 〗
+│
+├─ Digite um dos comandos abaixo:
+│
+├─ *${prefix}menu geral*  📜 Comandos Gerais
+├─ *${prefix}menu grupos* 👨‍👩‍👧‍👦 Comandos de Grupos
+│
+╰─❥ Desenvolvido por *${adminName.trim()}*
             `;
             await client.sendMessage(senderId, { text: menuMessage });
         }
 
         // Submenu: !menu geral
-        else if (comando === '!menu geral') {
+        else if (comando === `${prefix}menu geral`) {
             const geralMenu = `
-            📜 *Menu Geral*:
-
-            1️⃣ *!bot*: Exibe informações sobre o bot (dono, versão, uptime, etc.).
-            2️⃣ *!s*: Envie uma foto ou vídeo para transformá-los em figurinhas (vídeos de até 6 segundos).
-            3️⃣ *!play*: Baixa músicas pelo nome ou link (Exemplo: !play <nome_da_música> ou *link*).
-
-            📨 Utilize um dos comandos acima para interagir comigo!
+┌──〖 *📜 MENU GERAL* 〗
+│
+├─ *${prefix}bot*  📟 Informações sobre o bot.
+├─ *${prefix}s*  🖼️ Transforme fotos ou vídeos em figurinhas.
+├─ *${prefix}play <nome/link>*  🎵 Baixe músicas pelo nome ou link.
+│
+╰─❥ Desenvolvido por *${adminName.trim()}*
             `;
             await client.sendMessage(senderId, { text: geralMenu });
         }
 
         // Submenu: !menu grupos
-        else if (comando === '!menu grupos') {
+        else if (comando === `${prefix}menu grupos`) {
             if (!isGroup) {
                 await client.sendMessage(senderId, {
                     text: '⚠️ Este menu é exclusivo para grupos.',
@@ -86,15 +92,15 @@ export const handleWelcomeMessage = async (client, msg) => {
             }
 
             const grupoMenu = `
-            📜 *Menu de Grupos*:
-
-            1️⃣ *!promover @usuario*: Promove o usuário mencionado a administrador.
-            2️⃣ *!rebaixar @usuario*: Remove o status de administrador do usuário mencionado.
-            3️⃣ *!mute @usuario <minutos>*: Silencia o usuário mencionado por um tempo especificado.
-            4️⃣ *!desmute @usuario*: Remove o silêncio de usuários.
-            5️⃣ *!listmuted*: Lista os usuários silenciados no grupo atual.
-
-            ⚠️ Apenas administradores podem usar comandos administrativos.
+┌──〖 *👨‍👩‍👧‍👦 MENU DE GRUPOS* 〗
+│
+├─ *${prefix}promover @usuario*  📈 Promove a administrador.
+├─ *${prefix}rebaixar @usuario*  📉 Remove o status de administrador.
+├─ *${prefix}mute @usuario <minutos>*  🔇 Silencia o usuário por tempo definido.
+├─ *${prefix}desmute @usuario*  🔊 Remove o silêncio de um usuário.
+├─ *${prefix}listmuted*  📜 Lista os usuários silenciados.
+│
+╰─❥ Apenas administradores podem usar comandos administrativos.
             `;
             await client.sendMessage(senderId, { text: grupoMenu });
         }
