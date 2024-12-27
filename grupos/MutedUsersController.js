@@ -20,6 +20,11 @@ const saveMutedUsers = (mutedUsers) => {
 export const MutedUsersController = {
     // Adicionar um usuário à lista de silenciados
     addMutedUser: (groupId, userId, durationInMinutes) => {
+        if (durationInMinutes <= 0 || durationInMinutes > 1440) { // Limite: 1 minuto a 24 horas
+            console.error('⚠️ O tempo de silêncio deve estar entre 1 e 1440 minutos.');
+            return false;
+        }
+    
         const mutedUsers = loadMutedUsers();
         const muteUntil = Date.now() + durationInMinutes * 60 * 1000;
     
@@ -33,6 +38,7 @@ export const MutedUsersController = {
         console.log(
             `✅ O usuário @${userId.split('@')[0]} foi silenciado no grupo ${groupId} por ${durationInMinutes} minuto(s) (até ${new Date(muteUntil).toLocaleString()}).`
         );
+        return true;
     },
     
 
@@ -104,27 +110,30 @@ export const MutedUsersController = {
         const now = Date.now();
     
         if (mutedUsers[groupId]) {
+            // Filtra e formata a lista de usuários silenciados
             const mutedList = Object.entries(mutedUsers[groupId])
-                .map(([userId, muteUntil]) => {
+                .filter(([userId, muteUntil]) => {
                     const remainingTime = muteUntil - now;
-    
                     if (remainingTime > 0) {
-                        const remainingMinutes = Math.ceil(remainingTime / 60000);
-                        return `- @${userId.split('@')[0]}: silenciado por mais ${remainingMinutes} minuto(s).`;
+                        return true; // Mantém o usuário na lista se ainda está silenciado
                     } else {
-                        // Remove usuário da lista se o tempo já expirou
+                        // Remove usuários cujo tempo expirou
                         delete mutedUsers[groupId][userId];
-                        return null;
+                        return false;
                     }
                 })
-                .filter(Boolean);
+                .map(([userId, muteUntil]) => {
+                    const remainingMinutes = Math.ceil((muteUntil - now) / 60000);
+                    return `- @${userId.split('@')[0]}: silenciado por mais ${remainingMinutes} minuto(s).`;
+                });
     
-            saveMutedUsers(mutedUsers); // Atualiza lista sem usuários expirados
+            // Salva a lista atualizada sem os usuários expirados
+            saveMutedUsers(mutedUsers);
     
-            return mutedList.length > 0 ? mutedList.join('\n') : '⚠️ Nenhum usuário está silenciado neste grupo.';
+            return mutedList; // Retorna a lista de usuários silenciados como array
         }
     
-        return '⚠️ Nenhum usuário está silenciado neste grupo.';
+        // Caso não haja usuários silenciados no grupo, retorna um array vazio
+        return [];
     },
-    
 }    

@@ -48,6 +48,8 @@ export const handleMessages = async (upsert, sock) => {
             }
             
 
+    
+
             // Verifique se a mensagem é um comando
             if (!comando.startsWith(PREFIX)) {
                 console.log('⚠️ [DEBUG] Mensagem ignorada (não é um comando):', comando);
@@ -68,6 +70,11 @@ export const handleMessages = async (upsert, sock) => {
                 return msg.message.extendedTextMessage?.contextInfo?.mentionedJid?.[0] || null;
             };
 
+
+            if(comando.startsWith(`${PREFIX}buscar`)) {
+
+            }
+
             if (comando.startsWith(`${PREFIX}bot`)) {
                 const infoMensagem = `🤖 *${botInfo.botName}*\n` +
                                      `👑 *Dono*: ${botInfo.owner}\n` +
@@ -78,6 +85,11 @@ export const handleMessages = async (upsert, sock) => {
                 await responderTexto(idChat, infoMensagem, msg);
             }
 
+
+
+
+
+            
             // Roteamento de comandos
             if (comando.startsWith(`${PREFIX}s`)) {
                 console.log('🟡 [DEBUG] Chamando stickerController para comando explícito.');
@@ -144,35 +156,43 @@ export const handleMessages = async (upsert, sock) => {
                 });
             }
 
-            // Comando: !mute
             else if (comando.startsWith(`${PREFIX}mute`)) {
                 if (!isGroup) {
                     await responderTexto(idChat, '⚠️ Este comando só pode ser usado em grupos.', msg);
                     continue;
                 }
-
-                const mentionedUser = extractMentionedUser(msg);
-                const durationMatch = comando.match(/\d+/);
-                const duration = durationMatch ? parseInt(durationMatch[0], 10) : 0;
-
-                if (!mentionedUser || duration <= 0) {
-                    await responderTexto(idChat, '⚠️ Use o comando no formato: !mute @usuario <minutos>', msg);
+            
+                // Extraindo o usuário mencionado e a duração
+                const mentionedUsers = msg.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
+                const durationMatch = comando.match(/\d+$/); // Pega o último número no comando
+                const duration = durationMatch ? parseInt(durationMatch[0], 10) : null;
+            
+                if (mentionedUsers.length === 0 || !duration || duration <= 0 || duration > 1440) {
+                    await responderTexto(
+                        idChat,
+                        '⚠️ Use o comando no formato: !mute @usuario <minutos>. O tempo deve estar entre 1 e 1440 minutos.',
+                        msg
+                    );
                     continue;
                 }
-
+            
+                const mentionedUser = mentionedUsers[0];
                 const isSenderAdmin = await GroupController.isAdmin(idChat, senderId, sock);
+            
                 if (!isSenderAdmin) {
                     await responderTexto(idChat, '❌ Apenas administradores podem usar este comando.', msg);
                     continue;
                 }
-
+            
+                // Silencia o usuário
                 MutedUsersController.addMutedUser(idChat, mentionedUser, duration);
                 await responderTexto(
                     idChat,
-                    `✅ O usuário @${mentionedUser.split('@')[0]} foi silenciado por ${duration} minutos.`,
+                    `✅ O usuário @${mentionedUser.split('@')[0]} foi silenciado por ${duration} minuto(s).`,
                     msg
                 );
             }
+            
 
             // Comando: !desmute
             else if (comando.startsWith(`${PREFIX}desmute`)) {
@@ -201,22 +221,19 @@ export const handleMessages = async (upsert, sock) => {
                 }
             }
 
-            // Comando: !listmuted
             else if (comando === `${PREFIX}listmuted`) {
                 const mutedUsers = MutedUsersController.listMutedUsers(idChat);
-                if (!Object.keys(mutedUsers).length) {
+            
+                if (mutedUsers.length === 0) {
+                    // Caso não haja usuários silenciados
                     await responderTexto(idChat, '📜 Nenhum usuário está silenciado no momento.', msg);
                 } else {
-                    const list = Object.entries(mutedUsers)
-                        .map(([userId, muteUntil]) => {
-                            const remainingTime = Math.ceil((muteUntil - Date.now()) / 60000);
-                            return `@${userId.split('@')[0]} - ${remainingTime} minutos restantes`;
-                        })
-                        .join('\n');
-                    await responderTexto(idChat, `📜 Usuários silenciados:\n${list}`, msg);
+                    // Caso haja usuários silenciados, exibe a lista
+                    const mutedList = mutedUsers.join('\n');
+                    await responderTexto(idChat, `📜 Usuários silenciados:\n${mutedList}`, msg);
                 }
             }
-
+            
             // Mensagens de mídia
             else if (['imageMessage', 'videoMessage'].includes(tipoMensagem)) {
                 await handleMediaMessage(msg, sock, mensagemBaileys);
