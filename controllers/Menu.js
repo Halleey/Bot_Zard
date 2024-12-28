@@ -77,6 +77,8 @@ export const handleWelcomeMessage = async (client, msg) => {
 ├─ *${prefix}bot*  📟 Informações sobre o bot.
 ├─ *${prefix}s*  🖼️ Transforme fotos ou vídeos em figurinhas estáticas.
 ├─ *${prefix}ss*  🎞️ Transforme vídeos em figurinhas animadas.
+├─ *${prefix}gere*  ✍️ _forneça detalhes para gerar uma imagem._
+│ (*em inglês ele irá entender melhor*).
 │
 ╰─❥ Bot *${botName.trim()}*
             `;

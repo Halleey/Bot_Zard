@@ -67,18 +67,18 @@ export const MutedUsersController = {
     // Remover um usuário específico da lista de silenciados
     removeMutedUser: (groupId, userId) => {
         const mutedUsers = loadMutedUsers();
-
+    
         if (mutedUsers[groupId] && mutedUsers[groupId][userId]) {
             delete mutedUsers[groupId][userId];
             if (Object.keys(mutedUsers[groupId]).length === 0) {
                 delete mutedUsers[groupId];
             }
             saveMutedUsers(mutedUsers);
-            console.log(`✅ O usuário ${userId} foi desmutado no grupo ${groupId}.`);
+            console.log(`✅ O usuário @${userId.split('@')[0]} foi desmutado no grupo ${groupId}.`);
             return true;
         }
-
-        console.log(`⚠️ O usuário ${userId} não foi encontrado na lista de silenciados do grupo ${groupId}.`);
+    
+        console.log(`⚠️ O usuário @${userId.split('@')[0]} não foi encontrado na lista de silenciados do grupo ${groupId}.`);
         return false;
     },
 
