@@ -7,7 +7,6 @@ import { MutedUsersController } from '../grupos/MutedUsersController.js';
 import {botInfo} from '../bot/infoBot.js'
 import {handleGroupParticipantsUpdate} from'../controllers/NewMember.js';
 import {mentionAll} from '../grupos/MentionAll.js'
-
 const PREFIX = '!';
 
 
@@ -174,6 +173,9 @@ export const handleMessages = async (upsert, sock) => {
                     mentions: [mentionedUser],
                 });
             }
+
+ 
+
 
             else if (comando.startsWith(`${PREFIX}mute`)) {
                 if (!isGroup) {

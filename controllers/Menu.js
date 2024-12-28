@@ -27,6 +27,7 @@ export const handleWelcomeMessage = async (client, msg) => {
         const senderId = msg.idChat; 
         const isGroup = senderId.endsWith('@g.us'); 
         const botName = "Zard"; 
+
         const prefix = "!"; 
 
         if (!senderId) {
@@ -99,7 +100,7 @@ export const handleWelcomeMessage = async (client, msg) => {
 ├─ *${prefix}mute @usuario <minutos>*  🔇 Silencia o usuário por tempo definido.
 ├─ *${prefix}desmute @usuario*  🔊 Remove o silêncio de um usuário.
 ├─ *${prefix}listmuted*  📜 Lista os usuários silenciados.
-│
+├─ *${prefix}all*  📢 Menciona todos os membros do grupo.
 ╰─❥ Apenas administradores podem usar comandos administrativos.
             `;
             await client.sendMessage(senderId, { text: grupoMenu });
