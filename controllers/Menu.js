@@ -20,13 +20,13 @@ const saveInteraction = (id) => {
         fs.writeFileSync(interactionFilePath, JSON.stringify(interactions, null, 2));
     }
 };
+
 export const handleWelcomeMessage = async (client, msg) => {
     try {
         const interactions = getInteractions();
         const senderId = msg.idChat; 
         const isGroup = senderId.endsWith('@g.us'); 
         const botName = "Zard"; 
-        const adminName = "Hallyson";
         const prefix = "!"; 
 
         if (!senderId) {
@@ -45,7 +45,7 @@ export const handleWelcomeMessage = async (client, msg) => {
 ├─ Eu sou o *${botName.trim()}* e estou aqui para te ajudar com várias funcionalidades. 😊
 ├─ Digite *${prefix}menu* para acessar a lista de comandos disponíveis.
 │
-╰─❥ Desenvolvido por *${adminName.trim()}*
+╰─❥ Bot *${botName.trim()}*
             `;
             await client.sendMessage(senderId, { text: welcomeMessage });
             saveInteraction(senderId); // Salva a interação no arquivo
@@ -63,7 +63,7 @@ export const handleWelcomeMessage = async (client, msg) => {
 ├─ *${prefix}menu geral*  📜 Comandos Gerais
 ├─ *${prefix}menu grupos* 👨‍👩‍👧‍👦 Comandos de Grupos
 │
-╰─❥ Desenvolvido por *${adminName.trim()}*
+╰─❥ Bot *${botName.trim()}*
             `;
             await client.sendMessage(senderId, { text: menuMessage });
         }
@@ -74,10 +74,10 @@ export const handleWelcomeMessage = async (client, msg) => {
 ┌──〖 *📜 MENU GERAL* 〗
 │
 ├─ *${prefix}bot*  📟 Informações sobre o bot.
-├─ *${prefix}s*  🖼️ Transforme fotos ou vídeos em figurinhas.
-├─ *${prefix}play <nome/link>*  🎵 Baixe músicas pelo nome ou link.
+├─ *${prefix}s*  🖼️ Transforme fotos ou vídeos em figurinhas estáticas.
+├─ *${prefix}ss*  🎞️ Transforme vídeos em figurinhas animadas.
 │
-╰─❥ Desenvolvido por *${adminName.trim()}*
+╰─❥ Bot *${botName.trim()}*
             `;
             await client.sendMessage(senderId, { text: geralMenu });
         }
@@ -103,6 +103,16 @@ export const handleWelcomeMessage = async (client, msg) => {
 ╰─❥ Apenas administradores podem usar comandos administrativos.
             `;
             await client.sendMessage(senderId, { text: grupoMenu });
+        }
+
+        // Alerta de vídeo longo ou de fontes externas como TikTok e Instagram
+        if (comando === `${prefix}ss` || comando === `${prefix}s`) {
+            const alertMessage = `
+⚠️ *Aviso Importante*:
+Vídeos muito longos ou provenientes de plataformas como TikTok ou Instagram podem não ser processados corretamente.
+Se você encontrar problemas, tente usar vídeos mais curtos ou de outra fonte.
+            `;
+            await client.sendMessage(senderId, { text: alertMessage });
         }
     } catch (error) {
         console.error('❌ Erro ao processar a mensagem:', error);

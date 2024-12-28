@@ -5,17 +5,30 @@ import { MusicController } from '../controllers/MusicController.js';
 import { GroupController } from '../grupos/GroupController.js';
 import { MutedUsersController } from '../grupos/MutedUsersController.js';
 import {botInfo} from '../bot/infoBot.js'
+import {handleGroupParticipantsUpdate} from'../controllers/NewMember.js';
+import {mentionAll} from '../grupos/MentionAll.js'
+
 const PREFIX = '!';
+
 
 export const handleMessages = async (upsert, sock) => {
     try {
-        // Limpa usuários com silêncios expirados antes de processar as mensagens
+
+        sock.ev.on('group-participants.update', async (update) => {
+            try {
+                await handleGroupParticipantsUpdate(update, sock); // Reutiliza a lógica do handler
+            } catch (err) {
+                console.error('Erro no evento de atualização de participantes:', err);
+            }
+        });
+
+
         MutedUsersController.cleanExpiredMutes();
 
         const messages = upsert.messages;
 
         for (const msg of messages) {
-            if (!msg.message || msg.key.fromMe) continue;
+            if (!msg.message) continue;
 
             const tipoMensagem = Object.keys(msg.message)[0];
             const textoRecebido = extractText(msg);
@@ -50,6 +63,8 @@ export const handleMessages = async (upsert, sock) => {
 
     
 
+           
+
             // Verifique se a mensagem é um comando
             if (!comando.startsWith(PREFIX)) {
                 console.log('⚠️ [DEBUG] Mensagem ignorada (não é um comando):', comando);
@@ -70,9 +85,16 @@ export const handleMessages = async (upsert, sock) => {
                 return msg.message.extendedTextMessage?.contextInfo?.mentionedJid?.[0] || null;
             };
 
-
-            if(comando.startsWith(`${PREFIX}buscar`)) {
-
+            if (comando.startsWith(`${PREFIX}all`)) {
+                // Verifica se o remetente é um administrador
+                const isSenderAdmin = await GroupController.isAdmin(idChat, senderId, sock);
+                if (!isSenderAdmin) {
+                    await responderTexto(idChat, '❌ Somente administradores podem usar este comando.', msg);
+                    return;  // Impede que o comando seja executado
+                }
+                
+                // Se for administrador, execute o comando
+                await mentionAll(idChat, sock);
             }
 
             if (comando.startsWith(`${PREFIX}bot`)) {
@@ -85,17 +107,14 @@ export const handleMessages = async (upsert, sock) => {
                 await responderTexto(idChat, infoMensagem, msg);
             }
 
-
-
-
-
             
             // Roteamento de comandos
-            if (comando.startsWith(`${PREFIX}s`)) {
-                console.log('🟡 [DEBUG] Chamando stickerController para comando explícito.');
+            if (comando === '!s' || comando === '!ss') {
+                // Passar as informações para o stickerController
+                console.log(`Gerando figurinha ${comando === '!s' ? 'estática' : 'animada'}...`);
                 await stickerController(sock, mensagemBaileys, { responderTexto });
-            } 
-            
+            }
+        
             else if (comando.startsWith(`${PREFIX}menu`)) {
                 console.log('🟡 [DEBUG] Chamando handleWelcomeMessage para !menu.');
                 await handleWelcomeMessage(sock, mensagemBaileys);

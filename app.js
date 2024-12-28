@@ -1,6 +1,5 @@
 import { makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import { connectHandlers } from './handlers/connectHandlers.js';
-import { handleReconnection } from './handlers/reconnectionHandler.js';
 import moment from "moment-timezone";
 
 // Configurando o fuso horário
