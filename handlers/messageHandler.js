@@ -7,6 +7,9 @@ import { MutedUsersController } from '../grupos/MutedUsersController.js';
 import {botInfo} from '../bot/infoBot.js'
 import {handleGroupParticipantsUpdate} from'../controllers/NewMember.js';
 import {mentionAll} from '../grupos/MentionAll.js'
+import {gerarImagemComDetalhe} from '../ia/Hercai.js'
+import fs from 'fs';  // Adicionando a importação do fs
+
 const PREFIX = '!';
 
 
@@ -106,7 +109,32 @@ export const handleMessages = async (upsert, sock) => {
                 await responderTexto(idChat, infoMensagem, msg);
             }
 
-            
+
+
+            if (comando.startsWith(`${PREFIX}gere`)) {
+                const detalhes = textoRecebido.slice(6).trim(); // Extrai os detalhes após o comando
+              
+                if (!detalhes) {
+                  await sock.sendMessage(idChat, {
+                    text: '❌ Por favor, forneça os detalhes da imagem a ser gerada.',
+                    quoted: mensagemOriginal.key, // Responde à mensagem do usuário
+                  });
+                  return;
+                }
+              
+                // Chama a função para gerar a imagem
+                const resultadoImagem = await gerarImagemComDetalhe(detalhes, idChat, sock);
+              
+                // Verifica erros na geração ou envio da imagem
+                if (resultadoImagem.erro) {
+                  await sock.sendMessage(idChat, {
+                    text: resultadoImagem.erro,
+                    quoted: mensagemOriginal.key, // Responde à mensagem do usuário
+                  });
+                }
+              }
+              
+
             // Roteamento de comandos
             if (comando === '!s' || comando === '!ss') {
                 // Passar as informações para o stickerController
