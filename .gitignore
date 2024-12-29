@@ -5,3 +5,4 @@ npm-debug.log*
 interactions.json
 auth/
 mutedUsers.json
+api.env

@@ -103,7 +103,10 @@ async function createStaticSticker(videoPath, outputPath) {
     await new Promise((resolve, reject) => {
         ffmpeg(videoPath)
             .outputOptions([
-                '-vf', 'scale=512:512:force_original_aspect_ratio=increase,crop=512:512', // Ajusta o tamanho e recorta a imagem
+                // Ajuste para garantir que a imagem sempre ocupe 512x512 sem cortar
+                '-vf', 'scale=512:512:force_original_aspect_ratio=decrease,pad=512:512:(ow-iw)/2:(oh-ih)/2', // Ajuste para não cortar
+                // Caso a imagem seja menor, ela será esticada para o tamanho 512x512
+                '-vf', 'scale=512:512', // Força a imagem para 512x512 se for menor que o necessário
                 '-vframes', '1', // Apenas o primeiro quadro (estático)
                 '-f', 'webp', // Formato WebP
                 '-c:v', 'libwebp', // Usa o codec WebP
@@ -121,6 +124,7 @@ async function createStaticSticker(videoPath, outputPath) {
             });
     });
 }
+
 
 /**
  * Gera uma figurinha animada a partir do vídeo.

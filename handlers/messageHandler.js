@@ -5,23 +5,19 @@ import { MusicController } from '../controllers/MusicController.js';
 import { GroupController } from '../grupos/GroupController.js';
 import { MutedUsersController } from '../grupos/MutedUsersController.js';
 import { botInfo } from '../bot/infoBot.js';
-import { handleGroupParticipantsUpdate } from '../controllers/NewMember.js';
 import { mentionAll } from '../grupos/MentionAll.js';
 import { gerarImagemComDetalhe } from '../ia/Hercai.js';
 import * as groupCommands from '../grupos/groupCommands.js'; // Importando as funções de comandos de grupo
+import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
+
 
 const PREFIX = '!';
 
 export const handleMessages = async (upsert, sock) => {
-    try {
-        sock.ev.on('group-participants.update', async (update) => {
-            try {
-                await handleGroupParticipantsUpdate(update, sock);
-            } catch (err) {
-                console.error('Erro no evento de atualização de participantes:', err);
-            }
-        });
+    const botId = sock.user.id;
+    console.log('ID do bot:', botId);
 
+    try {
         MutedUsersController.cleanExpiredMutes();
 
         const messages = upsert.messages;
@@ -42,6 +38,9 @@ export const handleMessages = async (upsert, sock) => {
                 isGroup,
                 mensagemOriginal: msg,
             };
+
+            // Contabiliza a mensagem do usuário
+            incrementMessageCount(senderId);
 
             console.log('📩 Mensagem recebida:', mensagemBaileys);
 
@@ -83,7 +82,7 @@ export const handleMessages = async (upsert, sock) => {
                     await responderTexto(idChat, '❌ Somente administradores podem usar este comando.', msg);
                     return;
                 }
-                
+
                 // Se for administrador, execute o comando
                 await mentionAll(idChat, sock);
             }
@@ -100,6 +99,14 @@ export const handleMessages = async (upsert, sock) => {
 
             if (comando.startsWith(`${PREFIX}gere`)) {
                 const detalhes = textoRecebido.slice(6).trim();
+
+                // Verifica se a mensagem foi enviada pelo próprio bot
+                if (msg.key.fromMe === false && senderId !== botId) {
+                    // Impede que qualquer outro usuário (não o bot) execute o comando
+                    await responderTexto(idChat, '❌ Apenas o bot pode usar esse comando.', msg);
+                    return;
+                }
+
                 if (!detalhes) {
                     await responderTexto(idChat, '❌ Por favor, forneça os detalhes da imagem a ser gerada.', msg);
                     return;
@@ -158,7 +165,13 @@ export const handleMessages = async (upsert, sock) => {
                 // Passando a função responderTexto corretamente
                 await groupCommands.unmuteUser(idChat, senderId, mentionedUser, sock, responderTexto);
             }
-            
+
+            // Comando: !ranking
+            else if (comando.startsWith(`${PREFIX}ranking`)) {
+                console.log('🔝 Exibindo ranking de usuários mais ativos...');
+                await displayTopUsers(sock, idChat);
+            }
+
             // Mensagens de mídia
             else if (['imageMessage', 'videoMessage'].includes(tipoMensagem)) {
                 await handleMediaMessage(msg, sock, mensagemBaileys);
