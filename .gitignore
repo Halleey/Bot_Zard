@@ -6,3 +6,4 @@ interactions.json
 auth/
 mutedUsers.json
 api.env
+grupos/messageCounts.json
