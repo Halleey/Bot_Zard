@@ -118,6 +118,8 @@ export const handleMessages = async (upsert, sock) => {
                 }
             }
 
+       
+
             // Roteamento de comandos
             if (comando === '!s' || comando === '!ss') {
                 console.log(`Gerando figurinha ${comando === '!s' ? 'estática' : 'animada'}...`);

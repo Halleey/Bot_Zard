@@ -73,10 +73,12 @@ export const handleWelcomeMessage = async (client, msg) => {
         else if (comando === `${prefix}menu geral`) {
             const geralMenu = `
 ┌──〖 *📜 MENU GERAL* 〗
-│
+│   *ENVIE A FOTO/VÍDEO COM O*
+│    *COMANDO NA LEGENDA*
 ├─ *${prefix}bot*  📟 Informações sobre o bot.
 ├─ *${prefix}s*  🖼️ Transforme fotos ou vídeos em figurinhas estáticas.
 ├─ *${prefix}ss*  🎞️ Transforme vídeos em figurinhas animadas.
+├─ *${prefix}play* 🎵 Informe o nome do áudio a ser baixado
 ├─ *${prefix}gere*  ✍️ _forneça detalhes para gerar uma imagem._
 │ (*em inglês ele irá entender melhor*).
 │

@@ -63,17 +63,13 @@ export async function stickerController(sock, mensagem, options) {
         console.log('🟡 [DEBUG] Enviando figurinha para:', idChat);
         const stickerBuffer = await readFile(tempOutputPath);
 
-        const stickerMetadata = {
-            packname: 'Zardelas',
-            author: 'Zard',
-        };
+   
 
         await sock.sendMessage(
             idChat,
             {
                 sticker: stickerBuffer,
                 mimetype: 'image/webp',
-                ...stickerMetadata,
             },
             { quoted: mensagemOriginal }
         );
