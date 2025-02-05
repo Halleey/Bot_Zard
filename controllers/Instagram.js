@@ -30,7 +30,7 @@ export async function baixarVideoInsta(url, sock, remoteJid) {
 export async function processMessage(msg, sock) {
     const { body, remoteJid } = msg;
     
-    if (body.startsWith("!insta ")) {
+    if (body.startsWith("!vid ")) {
         const url = body.split(" ")[1]; // Pegar o link
         if (!url) {
             await sock.sendMessage(remoteJid, { text: "🚨 Envie um link válido do Instagram!" });

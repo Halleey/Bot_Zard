@@ -10,6 +10,8 @@ import { gerarImagemComDetalhe } from '../ia/Hercai.js';
 import * as groupCommands from '../grupos/groupCommands.js'; // Importando as funções de comandos de grupo
 import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
 import {baixarVideoInsta} from '../controllers/Instagram.js'
+
+
 const PREFIX = '!';
 
 export const handleMessages = async (upsert, sock) => {
@@ -38,7 +40,7 @@ export const handleMessages = async (upsert, sock) => {
                 mensagemOriginal: msg,
             };
 
-            // Contabiliza a mensagem do usuário
+
             incrementMessageCount(senderId);
 
             console.log('📩 Mensagem recebida:', mensagemBaileys);
@@ -86,8 +88,6 @@ export const handleMessages = async (upsert, sock) => {
                 await mentionAll(idChat, sock);
             }
 
-            
-
             if (comando.startsWith(`${PREFIX}bot`)) {
                 const infoMensagem = `🤖 *${botInfo.botName}*\n` +
                                      `👑 *Dono*: ${botInfo.owner}\n` +
@@ -103,7 +103,6 @@ export const handleMessages = async (upsert, sock) => {
 
                 // Verifica se a mensagem foi enviada pelo próprio bot
                 if (msg.key.fromMe === false && senderId !== botId) {
-                    // Impede que qualquer outro usuário (não o bot) execute o comando
                     await responderTexto(idChat, '❌ Apenas o bot pode usar esse comando.', msg);
                     return;
                 }
@@ -119,7 +118,7 @@ export const handleMessages = async (upsert, sock) => {
                 }
             }
 
-            if (comando.startsWith(`${PREFIX}insta`)) {
+            if (comando.startsWith(`${PREFIX}vid`)) {
                 const url = textoRecebido.split(" ")[1]; // Pegar o link do Instagram
                 if (!url) {
                     await responderTexto(idChat, "🚨 Envie um link válido do Instagram!", msg);
