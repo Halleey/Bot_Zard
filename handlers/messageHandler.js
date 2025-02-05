@@ -9,7 +9,7 @@ import { mentionAll } from '../grupos/MentionAll.js';
 import { gerarImagemComDetalhe } from '../ia/Hercai.js';
 import * as groupCommands from '../grupos/groupCommands.js'; // Importando as funções de comandos de grupo
 import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
-
+import {baixarVideoInsta} from '../controllers/Instagram.js'
 
 const PREFIX = '!';
 
@@ -118,7 +118,16 @@ export const handleMessages = async (upsert, sock) => {
                 }
             }
 
-       
+            if (comando.startsWith(`${PREFIX}insta`)) {
+                const url = textoRecebido.split(" ")[1]; // Pegar o link do Instagram
+                if (!url) {
+                    await responderTexto(idChat, "🚨 Envie um link válido do Instagram!", msg);
+                    return;
+                }
+                await responderTexto(idChat, "⏳ Baixando vídeo, aguarde...", msg);
+                await baixarVideoInsta(url, sock, idChat);
+            }
+
 
             // Roteamento de comandos
             if (comando === '!s' || comando === '!ss') {
