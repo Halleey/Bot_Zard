@@ -10,7 +10,6 @@ import { gerarImagemComDetalhe } from '../ia/Hercai.js';
 import * as groupCommands from '../grupos/groupCommands.js'; // Importando as funções de comandos de grupo
 import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
 import {baixarVideoInsta} from '../controllers/Instagram.js'
-
 const PREFIX = '!';
 
 export const handleMessages = async (upsert, sock) => {
@@ -86,6 +85,8 @@ export const handleMessages = async (upsert, sock) => {
                 // Se for administrador, execute o comando
                 await mentionAll(idChat, sock);
             }
+
+            
 
             if (comando.startsWith(`${PREFIX}bot`)) {
                 const infoMensagem = `🤖 *${botInfo.botName}*\n` +

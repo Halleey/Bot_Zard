@@ -79,6 +79,7 @@ export const handleWelcomeMessage = async (client, msg) => {
 ├─ *${prefix}s*  🖼️ Transforme fotos ou vídeos em figurinhas estáticas.
 ├─ *${prefix}ss*  🎞️ Transforme vídeos em figurinhas animadas.
 ├─ *${prefix}play* 🎵 Informe o nome do áudio a ser baixado
+├─ *${prefix}insta* 📱 Link para dowload do vídeo
 ├─ *${prefix}gere*  ✍️ _forneça detalhes para gerar uma imagem._
 │ (*em inglês ele irá entender melhor*).
 │
