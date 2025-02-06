@@ -11,7 +11,6 @@ import * as groupCommands from '../grupos/groupCommands.js'; // Importando as fu
 import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
 import {baixarVideoInsta} from '../controllers/Instagram.js'
 
-
 const PREFIX = '!';
 
 export const handleMessages = async (upsert, sock) => {
@@ -118,6 +117,10 @@ export const handleMessages = async (upsert, sock) => {
                 }
             }
 
+            if(comando.startsWith(`${PREFIX}dow`)) {
+
+            }
+
             if (comando.startsWith(`${PREFIX}vid`)) {
                 const url = textoRecebido.split(" ")[1]; // Pegar o link do Instagram
                 if (!url) {
@@ -127,7 +130,6 @@ export const handleMessages = async (upsert, sock) => {
                 await responderTexto(idChat, "⏳ Baixando vídeo, aguarde...", msg);
                 await baixarVideoInsta(url, sock, idChat);
             }
-
 
             // Roteamento de comandos
             if (comando === '!s' || comando === '!ss') {
@@ -140,7 +142,7 @@ export const handleMessages = async (upsert, sock) => {
                 console.log('🟡 [DEBUG] Chamando MusicController para !play.');
                 await MusicController(sock, mensagemBaileys, { responderTexto });
             }
-
+        
             // Comando: !promover
             else if (comando.startsWith(`${PREFIX}promover`)) {
                 const mentionedUser = extractMentionedUser(msg);
