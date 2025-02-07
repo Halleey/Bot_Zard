@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 
 // Defina as credenciais fixas
-const sessionId = "";
-const csrfToken = "";
+const sessionId = "session token aqui";
+const csrfToken = "csrf token aqui";
 
 export async function baixarVideoInsta(url, sock, remoteJid) {
     const output = `insta_${Date.now()}.mp4`; // Nome do arquivo de saída
@@ -25,7 +25,7 @@ export async function baixarVideoInsta(url, sock, remoteJid) {
         const videoBuffer = fs.readFileSync(output);
         await sock.sendMessage(remoteJid, {
             video: videoBuffer,
-            caption: "🎥 Aqui está seu vídeo do Instagram!"
+            caption: "🎥 Aqui está seu vídeo chefia."
         });
 
         // Remover arquivo após envio

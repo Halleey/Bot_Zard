@@ -10,7 +10,7 @@ import { gerarImagemComDetalhe } from '../ia/Hercai.js';
 import * as groupCommands from '../grupos/groupCommands.js'; // Importando as funções de comandos de grupo
 import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
 import {baixarVideoInsta} from '../controllers/Instagram.js'
-
+import { handleAgendar, handleVerTarefas  } from '../controllers/Agenda.js';
 const PREFIX = '!';
 
 export const handleMessages = async (upsert, sock) => {
@@ -96,6 +96,17 @@ export const handleMessages = async (upsert, sock) => {
                                      `🚀 *Iniciar*: ${botInfo.iniciar}`;
                 await responderTexto(idChat, infoMensagem, msg);
             }
+
+
+            if (comando.startsWith(`${PREFIX}agendar`)) {
+                const respostaAgendamento = await handleAgendar(msg, sock);
+                await responderTexto(idChat, respostaAgendamento, msg);
+            }
+            else if(comando.startsWith(`${PREFIX}vertarefas`)) {
+                await handleVerTarefas(msg, sock);
+            }
+
+            
 
             if (comando.startsWith(`${PREFIX}gere`)) {
                 const detalhes = textoRecebido.slice(6).trim();
