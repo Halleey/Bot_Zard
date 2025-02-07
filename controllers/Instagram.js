@@ -3,8 +3,8 @@ import fs from "fs";
 import path from "path";
 
 // Defina as credenciais fixas
-const sessionId = "session token aqui";
-const csrfToken = "csrf token aqui";
+const sessionId = "";
+const csrfToken = "";
 
 export async function baixarVideoInsta(url, sock, remoteJid) {
     const output = `insta_${Date.now()}.mp4`; // Nome do arquivo de saída

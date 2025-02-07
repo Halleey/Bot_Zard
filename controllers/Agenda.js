@@ -23,24 +23,27 @@ const agendarTarefa = async (detalhes, horario, idChat) => {
     }
 };
 
+
+
 const getTarefas = async (idChat) => {
     try {
         const response = await fetch(`http://localhost:8080/api/tarefas/${idChat}`);
         const tarefas = await response.json();
-        console.log(tarefas);  // Verifique o conteúdo das tarefas retornadas pela API
+
         if (!response.ok || tarefas.length === 0) {
             return '🔍 Nenhuma tarefa encontrada para este chat.';
         }
 
-        // Formatar todas as tarefas
+        // Formatar todas as tarefas com um número para exclusão
         let listaTarefas = tarefas.map((t, index) => `📌 *${index + 1}.* ${t.descricao} - 🕒 ${moment(t.horario).format('DD/MM/YYYY HH:mm')}`).join('\n');
 
-        return listaTarefas;
+        return `Aqui estão suas tarefas:\n${listaTarefas}\n\nPara excluir uma tarefa, envie o número da tarefa (ex: "Excluir 2")`;
     } catch (error) {
         console.error('❌ Erro ao buscar tarefas:', error);
         return '❌ Ocorreu um erro ao buscar as tarefas.';
     }
 };
+
 
 
 const handleVerTarefas = async (msg, sock) => {
@@ -50,7 +53,12 @@ const handleVerTarefas = async (msg, sock) => {
 };
 
 
-const extractText = (msg) => msg?.message?.conversation || msg?.message?.extendedTextMessage?.text || '';
+const extractText = (msg) => {
+    console.log('Mensagem extraída:', msg);
+    return msg?.message?.conversation || msg?.message?.extendedTextMessage?.text || '';
+};
+
+
 
 const handleAgendar = async (msg, sock) => {
     const textoRecebido = extractText(msg).trim();
