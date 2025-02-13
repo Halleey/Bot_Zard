@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { GroupController } from './Members.js'; // Supondo que você tenha um controller para obter participantes do grupo
+import { GroupController } from './Members.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

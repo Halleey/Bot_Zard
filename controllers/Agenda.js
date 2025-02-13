@@ -16,10 +16,10 @@ const agendarTarefa = async (detalhes, horario, idChat) => {
         });
 
         const responseBody = await response.json();
-        return response.ok ? responseBody.message : '❌ Falha ao agendar a tarefa.';
+        return response.ok ? responseBody.message : '❌ Falha ao salvar anotação.';
     } catch (error) {
-        console.error('Erro ao agendar tarefa:', error);
-        return '❌ Ocorreu um erro ao tentar agendar a tarefa.';
+        console.error('Falha ao salvar anotação:', error);
+        return '❌ Ocorreu um erro ao tentar salvar a anotação.';
     }
 };
 
@@ -37,10 +37,10 @@ const getTarefas = async (idChat) => {
         // Formatar todas as tarefas com um número para exclusão
         let listaTarefas = tarefas.map((t, index) => `📌 *${index + 1}.* ${t.descricao} - 🕒 ${moment(t.horario).format('DD/MM/YYYY HH:mm')}`).join('\n');
 
-        return `Aqui estão suas tarefas:\n${listaTarefas}\n\nPara excluir uma tarefa, envie o número da tarefa (ex: "Excluir 2")`;
+        return `Aqui estão suas anotações:\n${listaTarefas}`;
     } catch (error) {
-        console.error('❌ Erro ao buscar tarefas:', error);
-        return '❌ Ocorreu um erro ao buscar as tarefas.';
+        console.error('❌ Erro ao buscar anotações:', error);
+        return '❌ Erro ao buscar anotações.';
     }
 };
 

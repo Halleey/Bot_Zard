@@ -7,12 +7,11 @@ import { MutedUsersController } from '../grupos/MutedUsersController.js';
 import { botInfo } from '../bot/infoBot.js';
 import { mentionAll } from '../grupos/MentionAll.js';
 import { gerarImagemComDetalhe } from '../ia/Hercai.js';
-import * as groupCommands from '../grupos/groupCommands.js'; // Importando as funções de comandos de grupo
+import * as groupCommands from '../grupos/groupCommands.js';
 import { incrementMessageCount, getTopUsers, displayTopUsers } from '../grupos/MessageController.js';
 import {baixarVideoInsta} from '../controllers/Instagram.js'
 import { handleAgendar, handleVerTarefas} from '../controllers/Agenda.js';
 import {handleAsciiArt}  from '../controllers/ImageAscii.js'
-
 const PREFIX = '!';
 
 export const handleMessages = async (upsert, sock) => {
@@ -132,10 +131,6 @@ export const handleMessages = async (upsert, sock) => {
                 if (resultadoImagem.erro) {
                     await responderTexto(idChat, resultadoImagem.erro, msg);
                 }
-            }
-
-            if(comando.startsWith(`${PREFIX}dow`)) {
-
             }
 
             if (comando.startsWith(`${PREFIX}vid`)) {
